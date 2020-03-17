@@ -1,0 +1,20 @@
+name: Build and Deploy Docker Image
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    # Job name is Greeting
+    name: Push Docker image
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push image to GCR
+        uses: RaccoonDev/push-docker-gcr@v1
+        with:
+          gcr_host: gcr.io
+          image_name: gcr.io/personal-projects-271301/notify_dinner_flask
+          image_tag: latest
+          env:
+            GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
+            GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
