@@ -3,16 +3,35 @@ name: Build and Deploy Docker Image
 on: [push]
 
 jobs:
-  build:
-    name: Push Docker image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Push image to GCR
-        uses: RaccoonDev/push-docker-gcr@v1
+    setup-build-publish-deploy:
+      name: Setup, Build, Publish, and Deploy
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout
+        uses: actions/checkout@master
+  
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          gcr_host: gcr.io
-          image_name: notify_dinner_flask
-          image_tag: latest
-          env:
-            GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
-            GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+          version: '270.0.0'
+          service_account_email: ${{ secrets.GCLOUD_SERVICE_KEY }}
+  
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          # Set up docker to authenticate
+          # via gcloud command-line tool.
+          gcloud auth configure-docker
+        
+      # Build the Docker image
+      - name: Build
+        run: |        
+          docker build . --tag gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |
+          docker push gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask
+          
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |
+          gcloud run deploy ${{ secrets.SERVICE_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/notify_dinner_flask --region us-central1 --platform managed
