@@ -35,4 +35,4 @@ jobs:
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |
-          gcloud components install beta && gcloud beta run deploy ${{ secrets.SERVICE_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT_ID }}/notify_dinner_flask --project ${{ secrets.GCLOUD_PROJECT_ID }} --region us-central1 --platform managed
+          gcloud components install beta && gcloud beta run deploy ${{ secrets.SERVICE_NAME }} --quiet --image gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask --project ${{ secrets.GOOGLE_PROJECT_ID }} --region us-central1 --platform managed
