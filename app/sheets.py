@@ -97,6 +97,9 @@ def get_google_sheet_recipes():
 
 
 def build_credentials():
+    """ Manually build google credentials instead of storing a service account
+    json file inside the codebase
+    """
     service_account_email = settings.SERVICE_ACCOUNT_EMAIL
     credentials = {
         "type": "service_account",
