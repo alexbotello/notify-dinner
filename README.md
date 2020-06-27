@@ -14,3 +14,5 @@ Run Locally
 docker build -t flask/notify-dinner .
 docker run -p 5000:5000 --env-file ./.env flask/notify-dinner
 ```
+
+[Google Sheet w/ Recipes](https://docs.google.com/spreadsheets/d/1UUVbRfNZykXiyMPrkSh4hrdHJBUnJAuQ_8aUyujj7eE/edit#gid=0)
