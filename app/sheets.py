@@ -11,37 +11,47 @@ import push
 import settings
 
 
-def get_todays_recipe():
-    recipe = randomly_select_recipe()
-    if recipe is None:
-        # Let me know there wasn't a recipe to grab
-        return push.notification("No recipe was available to select")
-    _, name, ingredients, _, url = recipe
-    try:
-        update_google_sheet_last_ate(recipe)
-    except AssertionError:
-        error = f"App failed to update Last Ate for {name}"
-        push.notification(error)
+def get_weekly_recipes():
+    recipes = randomly_select_recipes()
+    if recipes is None:
+        return push.notification("Oops, something went wrong. Please check app")
 
-    message = f"{name}\n\nIngredients Needed:\n{ingredients}\n\n{url}"
+    full_msg = ""
+    for i, recipe in enumerate(recipes):
+        num = i + 1
+        _, name, ingredients, _, url = recipe
+        try:
+            update_google_sheet_last_ate(recipe)
+        except AssertionError:
+            error = "App failed to update Last Ate for {name}"
+            push.notification(error)
+
+        full_msg += f"{num}. {name}\n\n{ingredients}\n\n{url}\n\n"
+
     push.notification(message)
     return "ok"
 
 
-def randomly_select_recipe():
+def randomly_select_recipes():
     recipes = get_google_sheet_recipes()
     random.shuffle(recipes)
 
-    return make_selection(recipes)
+    return make_selections(recipes)
 
 
-def make_selection(recipes):
+def make_selections(recipes, count=3):
+    """
+    grabs `count` number of recipes that have gone
+    atleast two weeks without being selected
+    """
+    selected_recipes = []
     for recipe in recipes:
-        # only select if it's been two weeks since late ate
+        if len(selected_recipes) == count:
+            break
         has_been_two_weeks = check_time_range(recipe)
         if has_been_two_weeks:
-            return recipe
-    return None
+            selected_recipes.append(recipe)
+    return selected_recipes or None
 
 
 def check_time_range(recipe):
@@ -52,7 +62,7 @@ def check_time_range(recipe):
 
     last_ate = datetime.strptime(recipe_last_ate, "%Y-%m-%d %H:%M:%S")
     time_between = datetime.now() - last_ate
-    if time_between.days > 13:
+    if time_between.days > 14:
         return True
     return False
 

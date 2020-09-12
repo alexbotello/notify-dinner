@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-from sheets import get_todays_recipe
+from sheets import get_weekly_recipes
 
 
 def create_app():
@@ -13,7 +13,7 @@ def create_app():
 
     @app.route("/get-recipe")
     def get_recipe():
-        return get_todays_recipe()
+       return get_weekly_recipes()
 
     return app
 
