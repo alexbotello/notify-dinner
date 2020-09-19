@@ -32,7 +32,7 @@ jobs:
         run: |
           docker push gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask
           
-      # Deploy the Docker image to the GKE cluster
+      # Deploy the Docker image to Cloud Run service
       - name: Deploy
         run: |
-          gcloud components install beta && gcloud beta run deploy ${{ secrets.SERVICE_NAME }} --quiet --image gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask --project ${{ secrets.GOOGLE_PROJECT_ID }} --region us-central1 --platform managed
+          gcloud run deploy ${{ secrets.SERVICE_NAME }} --quiet --image gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask --project ${{ secrets.GOOGLE_PROJECT_ID }} --region us-central1 --platform managed
