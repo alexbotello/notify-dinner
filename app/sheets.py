@@ -28,7 +28,7 @@ def get_weekly_recipes():
 
         full_msg += f"{num}. {name}\n\n{ingredients}\n\n{url}\n\n"
 
-    push.notification(message)
+    push.notification(full_msg)
     return "ok"
 
 
