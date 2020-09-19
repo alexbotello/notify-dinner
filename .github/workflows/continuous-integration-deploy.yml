@@ -33,8 +33,5 @@ jobs:
       # Deploy the Docker image to Cloud Run service
       - name: Deploy
         run: |
-          gcloud run deploy "${{ secrets.SERVICE_NAME }}" --quiet --region us-central1 \
-            --image "gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask:$GITHUB_SHA \
-            --platform "managed \
-            --allow-unauthenticated
+          gcloud run deploy "${{ secrets.SERVICE_NAME }}" --quiet --region us-central1 --image "gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/notify_dinner_flask:$GITHUB_SHA --platform "managed --allow-unauthenticated
 
